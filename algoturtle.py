@@ -86,8 +86,10 @@ class Tortuga:
         self.posicion[1] += 10
     def orientar_costado(self):
         self.orientacion += 180
-    def girar(self,cantidad):
+    def girar_izquierda(self, cantidad):
         self.orientacion += cantidad
+    def girar_derecha(self, cantidad):
+        self.orientacion -= cantidad
     def avanzar(self,cantidad = [10,10]):
         self.posicion[0] += cantidad[0]
         self.posicion[1] += cantidad[1]
@@ -97,3 +99,9 @@ class Tortuga:
        return f' <line x1="{self.posicion_inicial[0]* cos(self.orientacion_inicial)}" y1="{self.posicion_inicial[1] * sin(self.orientacion_inicial}" x2="{self.posicion[0] * cos(self.orientacion)}" y2="{self.posicion[1] * sin(self.orientacion)}" stroke-width="{self.ancho}" stroke="{self.color}" />'
     def __repr__(self):
         return f'[{self.pluma},{self.posicion},{self.orientacion}]'
+    def mover_pluma(self)
+        if self.pluma:
+            self.pluma = False
+        else:
+            self.pluma = True
+        self.avanzar()                                                                                                                      
