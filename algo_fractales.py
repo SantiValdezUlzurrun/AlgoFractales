@@ -71,6 +71,10 @@ def leer_archivo_sistemal(delimitador, tabla_conversion):
 
 def crear_cola_comandos(cadena):
     ''' '''
+    x_max = 0
+    x_min = 0
+    y_max = 0
+    y_min = 0
     
 def escribir_svg():
     ''' '''
