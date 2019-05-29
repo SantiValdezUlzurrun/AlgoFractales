@@ -16,10 +16,11 @@ ER_PED_1 = 'No ingresaste un entero para iterar el archivo'
 ER_PED_0 = 'El archivo el cual pasaste para leer esta vacio o no responde a las normas acordadas para trabajar'
 DELIMITADOR_ARCHIVO_SISTEMAL = " "
 tabla_conversion = {}
+
 def main():
     if not arreglar_pedido():
         return
-    generar_comandos(DELIMITADOR_ARCHIVO_SISTEMAL, tabla_conversion)
+    escribir_svg()
     
 def arreglar_pedido():
     if len(PEDIDO) < 3:
@@ -71,14 +72,27 @@ def leer_archivo_sistemal(delimitador, tabla_conversion):
 
 def crear_cola_comandos(cadena):
     ''' '''
-    x_max = 0
-    x_min = 0
-    y_max = 0
-    y_min = 0
+    cola_comandos = Cola
+    pila_tortugas = _Pila()
+    tabla_pasos = {F: avanzar(),G: avanzar(),f: mover_pluma() ,g: mover_pluma() ,+: girar_derecha(tabla_conversion[angulo]) ,-: girar_izquierda(tabla_conversion[angulo]) ,|: }
+    tabla_apilar = {[: pila_tortugas.apilar ,]: pila_tortugas.desapilar}
+    letra_0 = cadena[0]
+    tortuga_anterior = Tortuga(tabla_conversion[angulo])
+    
+    if letra_0 in tabla_pasos:
+        tortuga_anterior.tabla_pasos[letra_0]
+        x_max = tortuga_anterior.posicion[0]
+        x_min = tortuga_anterior.posicion[0]
+        y_max = tortuga_anterior.posicion[1]
+        y_min = tortuga_anterior.posicion[1]
+    elif letra_0 in tabla_apilar:
+        tabla_apilar[letra_0](tortuga_anterior)
+    for letra in cadena:
+    
     
 def escribir_svg():
     ''' '''
-    cola_comandos = crear_cola_comandos(f)
+    cola_comandos = crear_cola_comandos(generar_comandos(DELIMITADOR_ARCHIVO_SISTEMAL, tabla_conversion))
     with open (PEDIDO[2],'w',encoding = 'utf8') as archivo:
         archivo.write(f'PRIMERA_LINEA /n')
         while not cola_comandos.esta_vacia():
