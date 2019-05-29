@@ -3,7 +3,10 @@ import sys
 import csv
 _a = sys.argv
 PEDIDO = _a
-#PRIMERA_LINEA = f'<svg viewBox="{pila_x_min.ver_tope()} {pila_y_min.ver_tope()} {pila_x_max.ver_tope()} {pila_y_max.ver_tope()}" xmlns="http://www.w3.org/2000/svg">'
+x_max = 0
+x_min = 0
+y_max = 0
+y_min = 0
 COLOR = None
 ANCHO = None
 ER_BV = '''Bienvenido, abriste el archivo sin ningun comando o con menos de los necesarios, sus comandos son:
@@ -97,3 +100,4 @@ def escribir_svg():
         archivo.write(f'PRIMERA_LINEA /n')
         while not cola_comandos.esta_vacia():
             archivo.write(cola_comandos.desencolar() + '/n')
+PRIMERA_LINEA = f'<svg viewBox="{x_min} {y_min} {x_max} {y_max}" xmlns="http://www.w3.org/2000/svg">'
