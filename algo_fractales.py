@@ -75,27 +75,59 @@ def leer_archivo_sistemal(delimitador, tabla_conversion):
 
 def crear_cola_comandos(cadena):
     ''' '''
-    cola_comandos = Cola
+    cola_comandos = Cola()
     pila_tortugas = _Pila()
-    tabla_pasos = {F: avanzar(),G: avanzar(),f: mover_pluma() ,g: mover_pluma() ,+: girar_derecha(tabla_conversion[angulo]) ,-: girar_izquierda(tabla_conversion[angulo]) ,|: }
-    tabla_apilar = {[: pila_tortugas.apilar ,]: pila_tortugas.desapilar}
     letra_0 = cadena[0]
-    tortuga_anterior = Tortuga(tabla_conversion[angulo])
-    
-    if letra_0 in tabla_pasos:
-        tortuga_anterior.tabla_pasos[letra_0]
-        x_max = tortuga_anterior.posicion[0]
-        x_min = tortuga_anterior.posicion[0]
-        y_max = tortuga_anterior.posicion[1]
-        y_min = tortuga_anterior.posicion[1]
-    elif letra_0 in tabla_apilar:
-        tabla_apilar[letra_0](tortuga_anterior)
-    for letra in cadena:
-    
+    tortuga_anterior = Tortuga(tabla_conversion[angulo])  
+    if letra_0 == 'F' or letra_0 == 'G':
+        tortuga_anterior.avanzar()
+    elif letra_0 == 'f' or letra_0 == 'g':
+        tortuga_anterior.mover_pluma()
+    elif letra_0 == '+':
+        tortuga_anterior.girar_derecha(tabla_conversion[angulo])
+    elif letra_0 == '-':
+        tortuga_anterior.girar_izquierda(tabla_conversion[angulo])
+    elif letra_0 == '|':
+        tortuga_anterior.orientar_costado()
+    elif letra_0 == '[':
+        pila_tortugas.apilar(tortuga_anterior)
+    elif letra_0 == ']':
+        pila_tortugas.apilar(tortuga_anterior)
+    else:
+        return None
+    x_max = tortuga_anterior.posicion[0]
+    x_min = tortuga_anterior.posicion[0]
+    y_max = tortuga_anterior.posicion[1]
+    y_min = tortuga_anterior.posicion[1]
+    for letra in cadena[1::]:
+        tortuga_actual = Tortuga(tortuga_anterior.orientacion,tortuga_anterior.posicion,tortuga_anterior.pluma)
+        if letra == 'F' or letra == 'G':
+            tortuga_anterior.avanzar()
+        elif letra == 'f' or letra == 'g':
+            tortuga_anterior.mover_pluma()
+        elif letra == '+':
+            tortuga_anterior.girar_derecha(tabla_conversion[angulo])
+        elif letra == '-':
+            tortuga_anterior.girar_izquierda(tabla_conversion[angulo])
+        elif letra == '|':
+            tortuga_anterior.orientar_costado()
+        elif letra == '[':
+            pila_tortugas.apilar(tortuga_anterior)
+        elif letra == ']':
+            pila_tortugas.apilar(tortuga_anterior)
+        else:
+            return None
+        if letra == ']':
+            tortuga_anterior = pila_tortugas.ver_tope()
+        else:
+            tortuga_anterior = tortuga_actual
     
 def escribir_svg():
     ''' '''
     cola_comandos = crear_cola_comandos(generar_comandos(DELIMITADOR_ARCHIVO_SISTEMAL, tabla_conversion))
+    if not cola_comandos:
+        print(ERROR)
+        return
     with open (PEDIDO[2],'w',encoding = 'utf8') as archivo:
         archivo.write(f'PRIMERA_LINEA /n')
         while not cola_comandos.esta_vacia():
