@@ -1,3 +1,4 @@
+import math
 class _Nodo:
 
     def __init__(self, dato=None, prox=None):
@@ -84,7 +85,7 @@ class Tortuga:
     def avanzar_y(self):
         self.posicion[1] += 10
     def orientar_costado(self):
-        self.orientacion += 90
+        self.orientacion += 180
     def girar(self,cantidad):
         self.orientacion += cantidad
     def avanzar(self,cantidad = [10,10]):
@@ -93,6 +94,6 @@ class Tortuga:
     def circulo_svg(self):
        return '<circle cx="15" cy="10" r="8" fill="white" />'
     def pasar_linea_svg(self):
-       return f' <line x1="{self.posicion_inicial[0]}" y1="{self.posicion_inicial[1]}" x2="{self.posicion[0]}" y2="{self.posicion[1]}" stroke-width="{self.ancho}" stroke="{self.color}" />'
+       return f' <line x1="{self.posicion_inicial[0]* cos(self.orientacion_inicial)}" y1="{self.posicion_inicial[1] * sin(self.orientacion_inicial}" x2="{self.posicion[0] * cos(self.orientacion)}" y2="{self.posicion[1] * sin(self.orientacion)}" stroke-width="{self.ancho}" stroke="{self.color}" />'
     def __repr__(self):
         return f'[{self.pluma},{self.posicion},{self.orientacion}]'
