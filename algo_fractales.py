@@ -99,6 +99,7 @@ def crear_cola_comandos(cadena):
     x_min = tortuga_anterior.posicion[0]
     y_max = tortuga_anterior.posicion[1]
     y_min = tortuga_anterior.posicion[1]
+    cola_comandos.encolar(tortuga_anterior.pasar_linea_svg())
     for letra in cadena[1::]:
         tortuga_actual = Tortuga(tortuga_anterior.orientacion,tortuga_anterior.posicion,tortuga_anterior.pluma)
         if letra == 'F' or letra == 'G':
@@ -125,6 +126,7 @@ def crear_cola_comandos(cadena):
             y_max = tortuga_actual.posicion[1]
         if tortuga_actual.posicion[1] < y_min:
             y_min = tortuga_actual.posicion[1]
+        cola_comandos.encolar(tortuga_actual.pasar_linea_svg())
         if letra == ']':
             tortuga_anterior = pila_tortugas.ver_tope()
         else:
