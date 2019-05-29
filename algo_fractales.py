@@ -117,6 +117,14 @@ def crear_cola_comandos(cadena):
             pila_tortugas.apilar(tortuga_anterior)
         else:
             return None
+        if tortuga_actual.posicion[0] > x_max:
+            x_max = tortuga_actual.posicion[0]
+        if tortuga_actual.posicion[0] < x_min:
+            x_min = tortuga_actual.posicion[0]
+        if tortuga_actual.posicion[1] > y_max:
+            y_max = tortuga_actual.posicion[1]
+        if tortuga_actual.posicion[1] < y_min:
+            y_min = tortuga_actual.posicion[1]
         if letra == ']':
             tortuga_anterior = pila_tortugas.ver_tope()
         else:
