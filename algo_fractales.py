@@ -1,35 +1,26 @@
 from algoturtle import *
+from TDA import *
 import sys
 import csv
 
 
 ENTRADA = sys.argv[1::]
-x_max = 0
-x_min = 0
-y_max = 0
-y_min = 0
-COLOR = None
-ANCHO = None
-ER_BV = '''Bienvenido, abriste el archivo sin ningun comando o con menos de los necesarios, sus comandos son:
-1. nombre del archivo .sl (obligatorio)
-2. numero de veces a iterar (obligatorio tiene que ser entero)
-3. nombre del archivo svg a escribir (obligatorio)
-4. color del archivo (opcional y en ingles)
-5. ancho del lapiz a escribir (opcionar y un entero)'''
-ER_PED_1 = 'No ingresaste un entero para iterar el archivo'
-ER_PED_0 = 'El archivo el cual pasaste para leer esta vacio o no responde a las normas acordadas para trabajar'
 DELIMITADOR_ARCHIVO_SISTEMA_L = ' '
 tabla_conversion = {}
+MENSAJE_ERROR = 'Error de parametros'
+OPERACIONES_CARACTER = {'F': 'avanzar', 'G': 'avanzar',
+'f': ['pluma arriba', 'avanzar', 'pluma abajo'], 'g': 'f': ['pluma arriba', 'avanzar', 'pluma abajo'],
+'+': 'girar derecha', '-': 'girar izquierda', '|': 'invertir direccion', '[': 'apilar', ']': 'desapilar'}
 
 def algo_fractales():
     if validar_entrada(ENTRADA):
         ruta_archivo_sistema_l, iteraciones, ruta_archivo_svg = leer_entrada(ENTRADA)
-        comandos = generar_comandos(ruta_archivo_sistema_l, DELIMITADOR_ARCHIVO_SISTEMA_L, tabla_conversion)
-        primera_linea, cola_comandos = manejador_tortugas(comandos)
+        comandos = generar_comandos(ruta_archivo_sistema_l, DELIMITADOR_ARCHIVO_SISTEMA_L, tabla_conversion, iteraciones)
+        primera_linea, cola_comandos = interpretar_comandos(comandos)
         escribir_archivo_svg(ruta_archivo_svg, primera_linea, cola_comandos)
     else:
         print(MENSAJE_ERROR)
-        return
+
 
 def validar_entrada(entrada):
     ''' '''
@@ -45,12 +36,12 @@ def leer_entrada(entrada_valida):
     return entrada_valida[0], int(entrada_valida[1]), entrada_valida[2]
 
 
-def generar_comandos(ruta, delimitador, tabla_conversion):
+def generar_comandos(ruta, delimitador, tabla_conversion, iteraciones):
     '''Recibe la ruta del archivo donde se encuentra el sistema l, su separador, una tabla de conversion y la cantidad de iteraciones
     y devuelve una cadena de letras que se corresponden con los movimientos que debe realizar la tortuga
     '''
-    leer_archivo_sistemal(ruta, delimitador, tabla_conversion)
-    movimientos = formar_movimientos(tabla_conversion)
+    leer_archivo_sistema_l(ruta, delimitador, tabla_conversion)
+    movimientos = formar_movimientos(tabla_conversion, iteraciones)
     return movimientos
 
 def formar_movimientos(tabla_conversion, iteraciones):
@@ -66,7 +57,7 @@ def formar_movimientos(tabla_conversion, iteraciones):
         movimientos = movimientos_nuevo
     return movimientos
 
-def leer_archivo_sistemal(ruta, delimitador, tabla_conversion):
+def leer_archivo_sistema_l(ruta, delimitador, tabla_conversion):
     ''' - '''
     with open(ruta, 'r', encoding = 'utf8') as archivo:
         lector = csv.reader(archivo, delimiter=delimitador)
@@ -77,17 +68,39 @@ def leer_archivo_sistemal(ruta, delimitador, tabla_conversion):
 
 
 
-def manejador_tortugas(cadena_comandos):
+def interpretar_comandos(cadena_comandos):
     ''' '''
+    cola_comandos = Cola()
+    for letra in cadena_comandos:
+        linea_comando_svg, posicion_nueva= ejecutar_comando(letra)
+        cola_comandos.encolar(linea_comando_svg)
+        actualizar_canvas()
+    primera_linea = f'<svg viewBox="{cordenada_minima[0]} {cordenada_minima[1]} {cordenada_maxima[0]} {cordenada_maxima[1]}" xmlns="http://www.w3.org/2000/svg">'
+    return cola_comandos
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 def escribir_archivo_svg(ruta, primera_linea, sucesion_comandos):
     ''' '''
     if sucesion_comandos == None:
-        print('asdad')
+        print(MENSAJE_ERROR)
         return
-    with open (ruta, 'w', encoding = 'utf8') as archivo:
+    with open(ruta, 'w', encoding = 'utf8') as archivo:
         archivo.write(f'{primera_linea}')
         while not sucesion_comandos.esta_vacia():
             archivo.write(f'{sucesion_comandos.desencolar()}')
@@ -98,26 +111,7 @@ def escribir_archivo_svg(ruta, primera_linea, sucesion_comandos):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+algo_fractales()
 
 """
 
