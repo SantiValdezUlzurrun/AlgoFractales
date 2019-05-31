@@ -73,8 +73,8 @@ def interpretar_comandos(cadena_comandos, operaciones, angulo):
     cola_comandos = Cola()
     pila_tortugas.apilar(Tortuga())
     tortuga = pila_tortugas.ver_tope()
-    cordenada_minima = tortuga.posicion
-    cordenada_maxima = tortuga.posicion
+    cordenada_minima = tortuga.posicion[:]
+    cordenada_maxima = tortuga.posicion[:]
     for letra in cadena_comandos:
         if letra not in operaciones:
             continue
