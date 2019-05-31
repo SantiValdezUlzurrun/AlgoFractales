@@ -1,62 +1,54 @@
 from algoturtle import *
 import sys
 import csv
-_a = sys.argv
-_prueba = ['arbol1.sl', '3', 'abc.svg']
-PEDIDO = _prueba
-x_max = 0
-x_min = 0
-y_max = 0
-y_min = 0
-COLOR = None
-ANCHO = None
-ER_BV = '''Bienvenido, abriste el archivo sin ningun comando o con menos de los necesarios, sus comandos son:
-1. nombre del archivo .sl (obligatorio)
-2. numero de veces a iterar (obligatorio tiene que ser entero)
-3. nombre del archivo svg a escribir (obligatorio)
-4. color del archivo (opcional y en ingles)
-5. ancho del lapiz a escribir (opcionar y un entero)'''
-ER_PED_1 = 'No ingresaste un entero para iterar el archivo'
-ER_PED_0 = 'El archivo el cual pasaste para leer esta vacio o no responde a las normas acordadas para trabajar'
-DELIMITADOR_ARCHIVO_SISTEMAL = " "
-tabla_conversion = {}
 
-def main():
-    if arreglar_pedido():
-        return
-    escribir_svg()
-    
-def arreglar_pedido():
-    if len(PEDIDO) < 3:
-        print(ER_BV)
-        return False
-    if not PEDIDO[1].isdigit():
-        print(ER_PED_1)
-        return False
+
+ENTRADA = sys.argv[1::]
+DELIMITADOR_ARCHIVO_SISTEMA_L = ' '
+tabla_conversion = {}
+MENSAJE_ERROR = 'Error de parametros'
+OPERACIONES = "FGXfg+-|[]"
+
+
+
+def algo_fractales():
+    ''' '''
+    if validar_entrada(ENTRADA):
+        ruta_archivo_sistema_l, iteraciones, ruta_archivo_svg = leer_entrada(ENTRADA)
+        comandos = generar_comandos(ruta_archivo_sistema_l, DELIMITADOR_ARCHIVO_SISTEMA_L, tabla_conversion, iteraciones)
+        primera_linea, cola_comandos = interpretar_comandos(comandos, OPERACIONES, tabla_conversion["angulo"])
+        escribir_archivo_svg(ruta_archivo_svg, primera_linea, cola_comandos)
     else:
-        PEDIDO[1] = int(PEDIDO[1])
-    if not PEDIDO[2][::-1][:4:] == 'gvs.':
-        PEDIDO[2] = PEDIDO[2] + '.svg'
-    if not PEDIDO[0][::-1][:3:] == 'ls.':
-        PEDIDO[0] = PEDIDO[0] + '.sl'
-    if len(PEDIDO) > 3:
-        COLOR = PEDIDO[4]
-    if len(PEDIDO) >4 :
-        ANCHO = PEDIDO[5]
-    
-def generar_comandos(delimitador, tabla_conversion):
+        print(MENSAJE_ERROR)
+
+
+def validar_entrada(entrada):
+    ''' '''
+    if len(entrada) < 3:
+        return False
+    elif len(entrada) == 3 and entrada[1].isdigit():
+        return True
+    return False
+
+
+def leer_entrada(entrada_valida):
+    ''' '''
+    return entrada_valida[0], int(entrada_valida[1]), entrada_valida[2]
+
+
+def generar_comandos(ruta, delimitador, tabla_conversion, iteraciones):
     '''Recibe la ruta del archivo donde se encuentra el sistema l, su separador, una tabla de conversion y la cantidad de iteraciones
     y devuelve una cadena de letras que se corresponden con los movimientos que debe realizar la tortuga
     '''
-    leer_archivo_sistemal(delimitador, tabla_conversion)
-    movimientos = formar_movimientos(tabla_conversion)
+    leer_archivo_sistema_l(ruta, delimitador, tabla_conversion)
+    movimientos = formar_movimientos(tabla_conversion, iteraciones)
     return movimientos
 
-def formar_movimientos(tabla_conversion):
+def formar_movimientos(tabla_conversion, iteraciones):
     ''' - '''
     movimientos = tabla_conversion["axiomas"]
     movimientos_nuevo = ""
-    for i in range(PEDIDO[1]):
+    for i in range(iteraciones):
         for letra in movimientos:
             if letra in tabla_conversion.keys():
                 movimientos_nuevo += tabla_conversion[letra]
@@ -65,67 +57,39 @@ def formar_movimientos(tabla_conversion):
         movimientos = movimientos_nuevo
     return movimientos
 
-def leer_archivo_sistemal(delimitador, tabla_conversion):
+def leer_archivo_sistema_l(ruta, delimitador, tabla_conversion):
     ''' - '''
-    with open(PEDIDO[0],'r',encoding = 'utf8') as archivo:
+    with open(ruta, 'r', encoding = 'utf8') as archivo:
         lector = csv.reader(archivo, delimiter=delimitador)
-        tabla_conversion["angulo"] = next(lector)[0]
+        tabla_conversion["angulo"] = int(next(lector)[0])
         tabla_conversion["axiomas"] = next(lector)[0]
         for linea in lector:
             tabla_conversion[linea[0]] = linea[1]
-def crear_cola_comandos(cadena):
-    ''' '''
-    cola_comandos = Cola()
-    pila_tortugas = Pila()
-    letra_0 = cadena[0]
-    tortuga_anterior = Tortuga()  
-    tortuga_anterior = aplicar_cambios(letra_0,tortuga_anterior,pila_tortugas)
-    if not tortuga_anterior:
-        print('error cadena')
-        return None
-    x_max = tortuga_anterior.posicion[0]
-    x_min = tortuga_anterior.posicion[0]
-    y_max = tortuga_anterior.posicion[1]
-    y_min = tortuga_anterior.posicion[1]
-    cola_comandos.encolar(tortuga_anterior.pasar_linea_svg())
-    for letra in cadena[1::]:
-        posicion_in = tortuga_anterior.posicion[:]
-        posicion_p = tortuga_anterior.posicion[:]
-        orientacion_p = str(tortuga_anterior.orientacion)
-        orientacion_p = int(orientacion_p)
-        tortuga_actual = Tortuga(orientacion_p,posicion_p,tortuga_anterior.pluma,posicion_in)
-        
-        if letra == ']':
-            tortuga_anterior = pila_tortugas.ver_tope()
-        
-        else:
-            tortuga_anterior = tortuga_actual
-            
-        tortuga_actual = aplicar_cambios(letra,tortuga_actual,pila_tortugas)
-        
-        if not tortuga_actual:
-            print('error cadena')
-            return None
-        
-        if tortuga_actual.posicion[0] > x_max:
-            x_max = tortuga_actual.posicion[0]
-        
-        if tortuga_actual.posicion[0] < x_min:
-            x_min = tortuga_actual.posicion[0]
-        
-        if tortuga_actual.posicion[1] > y_max:
-            y_max = tortuga_actual.posicion[1]
-        
-        if tortuga_actual.posicion[1] < y_min:
-            y_min = tortuga_actual.posicion[1]
-        cola_comandos.encolar(tortuga_actual.pasar_linea_svg())
-        
 
-    primera_linea = f'<svg viewBox="{x_min } {y_min } {x_max } {y_max }" xmlns="http://www.w3.org/2000/svg">'
-    return cola_comandos,primera_linea
+
+
+def interpretar_comandos(cadena_comandos, operaciones, angulo):
+    ''' '''
+    pila_tortugas = Pila()
+    cola_comandos = Cola()
+    pila_tortugas.apilar(Tortuga())
+    tortuga = pila_tortugas.ver_tope()
+    cordenada_minima = tortuga.posicion
+    cordenada_maxima = tortuga.posicion
+    for letra in cadena_comandos:
+        if letra not in operaciones:
+            continue
+        linea_comando_svg, posicion_anterior, posicion_nueva = ejecutar_comando(letra, angulo, tortuga, pila_tortugas)
+        cola_comandos.encolar(linea_comando_svg)
+        cordenada_minima, cordenada_maxima = actualizar_canvas(posicion_anterior, posicion_nueva, cordenada_minima, cordenada_maxima)
+    primera_linea = f'<svg viewBox="{cordenada_minima[0]} {cordenada_minima[1]} {cordenada_maxima[0]} {cordenada_maxima[1]}" xmlns="http://www.w3.org/2000/svg">'
+    return primera_linea, cola_comandos
+
+
 
 def ejecutar_comando(letra, angulo, tortuga, pila_tortugas):
     ''' '''
+    posicion_inicial = tortuga.posicion
     if letra in 'FGX':
         tortuga.avanzar()
     elif letra == 'fg':
@@ -139,24 +103,41 @@ def ejecutar_comando(letra, angulo, tortuga, pila_tortugas):
     elif letra == '|':
         tortuga.orientar_costado()
     elif letra == '[':
-        pila_tortugas.apilar(tortuga)
+        tortuga_nueva = Tortuga()
+        tortuga.copiar_tortuga(tortuga_nueva)
+        pila_tortugas.apilar(tortuga_nueva)
+        tortuga = pila_tortugas.ver_tope()
     elif letra == ']':
         pila_tortugas.desapilar()
-    else:
-        return None #   No es necesario porque si no esta nunca entra a esta funcion
-    return tortuga
+    posicion_final = tortuga.posicion
+    linea_comando_svg = tortuga.pasar_linea_svg()
+    return linea_comando_svg, posicion_final, posicion_final
+
+
+def actualizar_canvas(posicion_anterior, posicion_nueva, cordenada_minima, cordenada_maxima):
+    eje_x = [posicion_anterior[0], posicion_nueva[0]]
+    eje_y = [posicion_anterior[1], posicion_nueva[1]]
+    cordenada_maxima = [max(eje_x), max(eje_y)]
+    cordenada_minima = [min(eje_x), min(eje_y)]
+    return cordenada_minima, cordenada_maxima
 
 
 
-def escribir_svg():
+
+def escribir_archivo_svg(ruta, primera_linea, sucesion_comandos):
     ''' '''
-    cola_comandos,primera_linea = crear_cola_comandos(generar_comandos(DELIMITADOR_ARCHIVO_SISTEMAL, tabla_conversion))
-    if cola_comandos == None:
-        print('asdad')
+    if sucesion_comandos == None:
+        print(MENSAJE_ERROR)
         return
-    with open (PEDIDO[2],'w',encoding = 'utf8') as archivo:
+    with open(ruta, 'w', encoding = 'utf8') as archivo:
         archivo.write(f'{primera_linea}')
-        while not cola_comandos.esta_vacia():
-            archivo.write(f'{cola_comandos.desencolar()}')
+        while not sucesion_comandos.esta_vacia():
+            archivo.write(f'{sucesion_comandos.desencolar()}')
         archivo.write('</svg>')
-main()
+
+
+
+
+
+
+algo_fractales()
