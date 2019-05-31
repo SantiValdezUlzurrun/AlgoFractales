@@ -73,28 +73,15 @@ def leer_archivo_sistemal(delimitador, tabla_conversion):
         tabla_conversion["axiomas"] = next(lector)[0]
         for linea in lector:
             tabla_conversion[linea[0]] = linea[1]
-
 def crear_cola_comandos(cadena):
     ''' '''
     cola_comandos = Cola()
     pila_tortugas = Pila()
     letra_0 = cadena[0]
-    tortuga_anterior = Tortuga(int(tabla_conversion['angulo']))  
-    if letra_0 == 'F' or letra_0 == 'G':
-        tortuga_anterior.avanzar()
-    elif letra_0 == 'f' or letra_0 == 'g':
-        tortuga_anterior.mover_pluma()
-    elif letra_0 == '+':
-        tortuga_anterior.girar_derecha(int(tabla_conversion['angulo']))
-    elif letra_0 == '-':
-        tortuga_anterior.girar_izquierda(int(tabla_conversion['angulo']))
-    elif letra_0 == '|':
-        tortuga_anterior.orientar_costado()
-    elif letra_0 == '[':
-        pila_tortugas.apilar(tortuga_anterior)
-    elif letra_0 == ']':
-        pila_tortugas.apilar(tortuga_anterior)
-    else:
+    tortuga_anterior = Tortuga()  
+    tortuga_anterior,pila_tortugas = aplicar_cambios(letra_0,tortuga_anterior,pila_tortugas)
+    if not tortuga_anterior:
+        print('error cadena')
         return None
     x_max = tortuga_anterior.posicion[0]
     x_min = tortuga_anterior.posicion[0]
@@ -102,38 +89,61 @@ def crear_cola_comandos(cadena):
     y_min = tortuga_anterior.posicion[1]
     cola_comandos.encolar(tortuga_anterior.pasar_linea_svg())
     for letra in cadena[1::]:
-        tortuga_actual = Tortuga(tortuga_anterior.orientacion,tortuga_anterior.posicion,tortuga_anterior.pluma)
-        if letra == 'F' or letra == 'G':
-            tortuga_anterior.avanzar()
-        elif letra == 'f' or letra == 'g':
-            tortuga_anterior.mover_pluma()
-        elif letra == '+':
-            tortuga_anterior.girar_derecha(int(tabla_conversion['angulo']))
-        elif letra == '-':
-            tortuga_anterior.girar_izquierda(int(tabla_conversion['angulo']))
-        elif letra == '|':
-            tortuga_anterior.orientar_costado()
-        elif letra == '[':
-            pila_tortugas.apilar(tortuga_anterior)
-        elif letra == ']':
-            pila_tortugas.apilar(tortuga_anterior)
+        posicion_in = tortuga_anterior.posicion[:]
+        posicion_p = tortuga_anterior.posicion[:]
+        orientacion_p = str(tortuga_anterior.orientacion)
+        orientacion_p = int(orientacion_p)
+        tortuga_actual = Tortuga(orientacion_p,posicion_p,tortuga_anterior.pluma,posicion_in)
+        
+        if letra == ']':
+            tortuga_anterior = pila_tortugas.ver_tope()
+        
         else:
-            continue
+            tortuga_anterior = tortuga_actual
+            
+        tortuga_actual,pila_tortugas = aplicar_cambios(letra,tortuga_actual,pila_tortugas)
+        
+        if not tortuga_actual:
+            print('error cadena')
+            return None
+        
         if tortuga_actual.posicion[0] > x_max:
             x_max = tortuga_actual.posicion[0]
+        
         if tortuga_actual.posicion[0] < x_min:
             x_min = tortuga_actual.posicion[0]
+        
         if tortuga_actual.posicion[1] > y_max:
             y_max = tortuga_actual.posicion[1]
+        
         if tortuga_actual.posicion[1] < y_min:
             y_min = tortuga_actual.posicion[1]
         cola_comandos.encolar(tortuga_actual.pasar_linea_svg())
-        if letra == ']':
-            tortuga_anterior = pila_tortugas.ver_tope()
-        else:
-            tortuga_anterior = tortuga_actual
-    primera_linea = f'<svg viewBox="{x_min} {y_min} {x_max} {y_max}" xmlns="http://www.w3.org/2000/svg">'
+        
+
+    primera_linea = f'<svg viewBox="{x_min } {y_min } {x_max } {y_max }" xmlns="http://www.w3.org/2000/svg">'
     return cola_comandos,primera_linea
+
+def aplicar_cambios(letra,tortuga,pila_tortugas):
+    if letra == 'F' or letra == 'G' or letra == 'X':
+        tortuga.avanzar()
+    elif letra == 'f' or letra == 'g':
+        tortuga.mover_pluma()
+        tortuga.avanzar()
+        tortuga.mover_pluma
+    elif letra == '+':
+        tortuga.girar_derecha(int(tabla_conversion['angulo']))
+    elif letra == '-':
+        tortuga.girar_izquierda(int(tabla_conversion['angulo']))
+    elif letra == '|':
+        tortuga.orientar_costado()
+    elif letra == '[':
+        pila_tortugas.apilar(tortuga)
+    elif letra == ']':
+        pila_tortugas.desapilar()
+    else:
+        return None
+    return tortuga,pila_tortugas
 
 
 def escribir_svg():
