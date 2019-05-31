@@ -1,9 +1,11 @@
-from math import *
+ from math import *
+
 class _Nodo:
 
     def __init__(self, dato=None, prox=None):
         self.dato = dato
         self.prox = prox
+
 class Cola:
 
     def __init__(self):
@@ -43,6 +45,7 @@ class Cola:
         if self.ultimo == None:
             return True
         return False
+
 class Pila:
     def __init__(self):
         self.ult = None
@@ -77,30 +80,50 @@ class Tortuga:
         self.posicion = posicion
         self.posicion_inicial = posicion_inicial
         self.orientacion = orientacion
-        self.color = color 
+        self.color = color
         self.ancho = ancho
+
     def orientar_costado(self):
         self.orientacion += 180
+        if self.orientacion > 360:
+            self.orientacion -= 360
+
     def girar_izquierda(self, cantidad):
         self.orientacion -= cantidad
+        if self.orientacion > 360:
+            self.orientacion -= 360
+
     def girar_derecha(self, cantidad):
         self.orientacion += cantidad
+        if self.orientacion > 360:
+            self.orientacion -= 360
+
     def avanzar(self,cantidad = [10,10]):
         self.posicion[0] += cantidad[0] * cos(self.orientacion * pi / 180)
         self.posicion[1] += cantidad[1] * sin(self.orientacion * pi /180)
+
     def circulo_svg(self):
        return '<circle cx="15" cy="10" r="8" fill="white" />'
+
     def pasar_linea_svg(self):
         a = self.posicion_inicial[0]
-        b = self.posicion_inicial[1] 
+        b = self.posicion_inicial[1]
         c = self.posicion[0]
         d = self.posicion[1]
         return f' <line x1="{a}" y1="{b}" x2="{c}" y2="{d}" stroke-width="{self.ancho}" stroke="{self.color}" />'
+
     def __repr__(self):
         return f'[{self.pluma},{self.posicion},{self.orientacion}]'
-    def mover_pluma(self):
-        if self.pluma:
-            self.pluma = False
-        else:
-            self.pluma = True
-        self.avanzar()             
+
+    def pluma_arriba(self):
+        self.pluma = False
+
+    def pluma_abajo(self):
+        self.pluma = True
+
+    def copiar_tortuga(self, tortuga_nueva):
+        tortuga_nueva.pluma = self.pluma
+        tortuga_nueva.posicion_inicial = self.posicion
+        tortuga_nueva.posicion = self.posicion
+        tortuga_nueva.orientacion = self.orientacion
+        
