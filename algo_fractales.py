@@ -2,8 +2,7 @@ from algoturtle import *
 import sys
 import csv
 _a = sys.argv
-_prueba = ['arbol1.sl', '3', 'abc.svg']
-PEDIDO = _prueba
+PEDIDO = ["arbol1.sl", "3", "abc.svg"]
 x_max = 0
 x_min = 0
 y_max = 0
@@ -25,7 +24,7 @@ def main():
     if arreglar_pedido():
         return
     escribir_svg()
-    
+
 def arreglar_pedido():
     if len(PEDIDO) < 3:
         print(ER_BV)
@@ -43,7 +42,7 @@ def arreglar_pedido():
         COLOR = PEDIDO[4]
     if len(PEDIDO) >4 :
         ANCHO = PEDIDO[5]
-    
+
 def generar_comandos(delimitador, tabla_conversion):
     '''Recibe la ruta del archivo donde se encuentra el sistema l, su separador, una tabla de conversion y la cantidad de iteraciones
     y devuelve una cadena de letras que se corresponden con los movimientos que debe realizar la tortuga
@@ -78,8 +77,8 @@ def crear_cola_comandos(cadena):
     cola_comandos = Cola()
     pila_tortugas = Pila()
     letra_0 = cadena[0]
-    tortuga_anterior = Tortuga()  
-    tortuga_anterior = aplicar_cambios(letra_0,tortuga_anterior,pila_tortugas)
+    tortuga_anterior = Tortuga()
+    tortuga_anterior,pila_tortugas = aplicar_cambios(letra_0,tortuga_anterior,pila_tortugas)
     if not tortuga_anterior:
         print('error cadena')
         return None
@@ -91,51 +90,49 @@ def crear_cola_comandos(cadena):
     for letra in cadena[1::]:
         posicion_in = tortuga_anterior.posicion[:]
         posicion_p = tortuga_anterior.posicion[:]
-        orientacion_p = str(tortuga_anterior.orientacion)
-        orientacion_p = int(orientacion_p)
+        orientacion_p = tortuga_anterior.orientacion
         tortuga_actual = Tortuga(orientacion_p,posicion_p,tortuga_anterior.pluma,posicion_in)
-        
+
         if letra == ']':
             tortuga_anterior = pila_tortugas.ver_tope()
-        
+
         else:
             tortuga_anterior = tortuga_actual
-            
-        tortuga_actual = aplicar_cambios(letra,tortuga_actual,pila_tortugas)
-        
+
+        tortuga_actual,pila_tortugas = aplicar_cambios(letra,tortuga_actual,pila_tortugas)
+
         if not tortuga_actual:
             print('error cadena')
             return None
-        
+
         if tortuga_actual.posicion[0] > x_max:
             x_max = tortuga_actual.posicion[0]
-        
+
         if tortuga_actual.posicion[0] < x_min:
             x_min = tortuga_actual.posicion[0]
-        
+
         if tortuga_actual.posicion[1] > y_max:
             y_max = tortuga_actual.posicion[1]
-        
+
         if tortuga_actual.posicion[1] < y_min:
             y_min = tortuga_actual.posicion[1]
         cola_comandos.encolar(tortuga_actual.pasar_linea_svg())
-        
+
 
     primera_linea = f'<svg viewBox="{x_min } {y_min } {x_max } {y_max }" xmlns="http://www.w3.org/2000/svg">'
     return cola_comandos,primera_linea
 
-def ejecutar_comando(letra, angulo, tortuga, pila_tortugas):
-    ''' '''
-    if letra in 'FGX':
+def aplicar_cambios(letra,tortuga,pila_tortugas):
+    if letra == 'F' or letra == 'G' or letra == 'X':
         tortuga.avanzar()
-    elif letra == 'fg':
-        tortuga.pluma_arriba()
+    elif letra == 'f' or letra == 'g':
+        tortuga.mover_pluma()
         tortuga.avanzar()
-        tortuga.pluma_abajo()
+        tortuga.mover_pluma()
     elif letra == '+':
-        tortuga.girar_derecha(angulo)
+        tortuga.girar_derecha(int(tabla_conversion['angulo']))
     elif letra == '-':
-        tortuga.girar_izquierda(angulo)
+        tortuga.girar_izquierda(int(tabla_conversion['angulo']))
     elif letra == '|':
         tortuga.orientar_costado()
     elif letra == '[':
@@ -143,9 +140,8 @@ def ejecutar_comando(letra, angulo, tortuga, pila_tortugas):
     elif letra == ']':
         pila_tortugas.desapilar()
     else:
-        return None #   No es necesario porque si no esta nunca entra a esta funcion
-    return tortuga
-
+        return None
+    return tortuga,pila_tortugas
 
 
 def escribir_svg():
@@ -160,3 +156,4 @@ def escribir_svg():
             archivo.write(f'{cola_comandos.desencolar()}')
         archivo.write('</svg>')
 main()
+
