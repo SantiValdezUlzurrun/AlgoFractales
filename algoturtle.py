@@ -84,23 +84,23 @@ class Tortuga:
         self.ancho = ancho
 
     def orientar_costado(self):
-        self.orientacion += 180
-        if self.orientacion > 360:
-            self.orientacion -= 360
+        self.orientacion += radians(180)
+        if self.orientacion > radians(360):
+            self.orientacion -= radians(360)
 
     def girar_izquierda(self, cantidad):
-        self.orientacion -= cantidad
-        if self.orientacion > 360:
-            self.orientacion -= 360
+        self.orientacion -= radians(cantidad)
+        if self.orientacion > radians(360):
+            self.orientacion -= radians(360)
 
     def girar_derecha(self, cantidad):
-        self.orientacion += cantidad
-        if self.orientacion > 360:
-            self.orientacion -= 360
+        self.orientacion += radians(cantidad)
+        if self.orientacion > radians(360):
+            self.orientacion -= radians(360)
 
     def avanzar(self,cantidad = [10,10]):
-        self.posicion[0] += cantidad[0] * cos(self.orientacion * pi / 180)
-        self.posicion[1] += cantidad[1] * sin(self.orientacion * pi /180)
+        self.posicion[0] -= cantidad[0] * cos(self.orientacion)
+        self.posicion[1] -= cantidad[1] * sin(self.orientacion)
 
     def circulo_svg(self):
        return '<circle cx="15" cy="10" r="8" fill="white" />'
