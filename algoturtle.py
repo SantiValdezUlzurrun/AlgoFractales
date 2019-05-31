@@ -103,4 +103,4 @@ class Tortuga:
             self.pluma = False
         else:
             self.pluma = True
-        self.avanzar()             
+        self.avanzar()  
