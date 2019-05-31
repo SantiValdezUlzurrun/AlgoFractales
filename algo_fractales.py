@@ -79,7 +79,7 @@ def crear_cola_comandos(cadena):
     pila_tortugas = Pila()
     letra_0 = cadena[0]
     tortuga_anterior = Tortuga()  
-    tortuga_anterior,pila_tortugas = aplicar_cambios(letra_0,tortuga_anterior,pila_tortugas)
+    tortuga_anterior = aplicar_cambios(letra_0,tortuga_anterior,pila_tortugas)
     if not tortuga_anterior:
         print('error cadena')
         return None
@@ -101,7 +101,7 @@ def crear_cola_comandos(cadena):
         else:
             tortuga_anterior = tortuga_actual
             
-        tortuga_actual,pila_tortugas = aplicar_cambios(letra,tortuga_actual,pila_tortugas)
+        tortuga_actual = aplicar_cambios(letra,tortuga_actual,pila_tortugas)
         
         if not tortuga_actual:
             print('error cadena')
@@ -124,17 +124,18 @@ def crear_cola_comandos(cadena):
     primera_linea = f'<svg viewBox="{x_min } {y_min } {x_max } {y_max }" xmlns="http://www.w3.org/2000/svg">'
     return cola_comandos,primera_linea
 
-def aplicar_cambios(letra,tortuga,pila_tortugas):
-    if letra == 'F' or letra == 'G' or letra == 'X':
+def ejecutar_comando(letra, angulo, tortuga, pila_tortugas):
+    ''' '''
+    if letra in 'FGX':
         tortuga.avanzar()
-    elif letra == 'f' or letra == 'g':
-        tortuga.mover_pluma()
+    elif letra == 'fg':
+        tortuga.pluma_arriba()
         tortuga.avanzar()
-        tortuga.mover_pluma
+        tortuga.pluma_abajo()
     elif letra == '+':
-        tortuga.girar_derecha(int(tabla_conversion['angulo']))
+        tortuga.girar_derecha(angulo)
     elif letra == '-':
-        tortuga.girar_izquierda(int(tabla_conversion['angulo']))
+        tortuga.girar_izquierda(angulo)
     elif letra == '|':
         tortuga.orientar_costado()
     elif letra == '[':
@@ -142,8 +143,9 @@ def aplicar_cambios(letra,tortuga,pila_tortugas):
     elif letra == ']':
         pila_tortugas.desapilar()
     else:
-        return None
-    return tortuga,pila_tortugas
+        return None #   No es necesario porque si no esta nunca entra a esta funcion
+    return tortuga
+
 
 
 def escribir_svg():
