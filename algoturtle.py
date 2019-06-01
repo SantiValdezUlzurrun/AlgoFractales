@@ -80,7 +80,7 @@ class Tortuga:
     orientar_arriba (suma 90 grados a orientacion)
     girar (gira una cantidad pasada por parametro)
     '''
-    def __init__(self,orientacion = 0, posicion = [0,0],pluma = True,posicion_inicial = [0,0],color ='black',ancho = 1):
+    def __init__(self,orientacion = 0, posicion = [0,0],pluma = True,posicion_inicial = [0,0],color ='black',ancho = 2):
         self.pluma = pluma
         self.posicion = posicion
         self.posicion_inicial = posicion_inicial
@@ -104,8 +104,8 @@ class Tortuga:
             self.orientacion -= radians(360)
 
     def avanzar(self,cantidad = [10,10]):
-        self.posicion[0] -= cantidad[0] * cos(self.orientacion)
-        self.posicion[1] -= cantidad[1] * sin(self.orientacion)
+        self.posicion[0] += cantidad[0] * sin(self.orientacion)
+        self.posicion[1] -= cantidad[1] * cos(self.orientacion)
 
     def circulo_svg(self):
        return '<circle cx="15" cy="10" r="8" fill="white" />'
@@ -131,3 +131,4 @@ class Tortuga:
         tortuga_nueva.posicion_inicial = self.posicion
         tortuga_nueva.posicion = self.posicion
         tortuga_nueva.orientacion = self.orientacion
+
