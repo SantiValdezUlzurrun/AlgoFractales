@@ -15,7 +15,6 @@ def algo_fractales():
     if validar_entrada(ENTRADA):
         ruta_archivo_sistema_l, iteraciones, ruta_archivo_svg = leer_entrada(ENTRADA)
         comandos = generar_comandos(ruta_archivo_sistema_l, DELIMITADOR_ARCHIVO_SISTEMA_L, tabla_conversion, iteraciones)
-        print(comandos)
         primera_linea, cola_comandos = interpretar_comandos(comandos, OPERACIONES, tabla_conversion["angulo"])
         escribir_archivo_svg(ruta_archivo_svg, primera_linea, cola_comandos)
     else:
