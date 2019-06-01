@@ -4,17 +4,18 @@ import csv
 
 
 #ENTRADA = sys.argv[1::]
-ENTRADA = ["arbol1.sl", "2", "m.svg"]
+ENTRADA = ["sier1.sl", "5", "a.svg"]
 DELIMITADOR_ARCHIVO_SISTEMA_L = ' '
 tabla_conversion = {}
 MENSAJE_ERROR = 'Error de parametros'
-OPERACIONES = "FGXfg+-|[]"
+OPERACIONES = "FGXYfg+-|[]"
 
 def algo_fractales():
     ''' '''
     if validar_entrada(ENTRADA):
         ruta_archivo_sistema_l, iteraciones, ruta_archivo_svg = leer_entrada(ENTRADA)
         comandos = generar_comandos(ruta_archivo_sistema_l, DELIMITADOR_ARCHIVO_SISTEMA_L, tabla_conversion, iteraciones)
+        print(comandos)
         primera_linea, cola_comandos = interpretar_comandos(comandos, OPERACIONES, tabla_conversion["angulo"])
         escribir_archivo_svg(ruta_archivo_svg, primera_linea, cola_comandos)
     else:
@@ -54,6 +55,7 @@ def formar_movimientos(tabla_conversion, iteraciones):
             else:
                 movimientos_nuevo += letra
         movimientos = movimientos_nuevo
+        movimientos_nuevo = ""
     return movimientos
 
 def leer_archivo_sistema_l(ruta, delimitador, tabla_conversion):
@@ -78,15 +80,11 @@ def interpretar_comandos(cadena_comandos, operaciones, angulo):
     for letra in cadena_comandos:
         if letra not in operaciones:
             continue
-        if letra in 'FGX':
-            linea_comando_svg, posicion_anterior, posicion_nueva = ejecutar_comando(letra, angulo, tortuga, pila_tortugas)
-        else:
-            continue
-        if linea_comando_svg == None:
-            continue
+        tortuga = pila_tortugas.ver_tope()
+        linea_comando_svg, posicion_anterior, posicion_nueva = ejecutar_comando(letra, angulo, tortuga, pila_tortugas)
         cola_comandos.encolar(linea_comando_svg)
-        cordenada_minima, cordenada_maxima = actualizar_canvas(posicion_anterior, posicion_nueva, cordenada_minima, cordenada_maxima)
-    primera_linea = f'<svg viewBox="{cordenada_minima[0]} {cordenada_minima[1]} {cordenada_maxima[0]} {cordenada_maxima[1]}" xmlns="http://www.w3.org/2000/svg">'
+        cordenada_minima, ancho, alto = actualizar_canvas(posicion_anterior, posicion_nueva, cordenada_minima, cordenada_maxima)
+    primera_linea = f'<svg viewBox="{cordenada_minima[0] - 5} {cordenada_minima[1] - 5} {ancho + 5} {alto + 5}" xmlns="http://www.w3.org/2000/svg">'
     return primera_linea, cola_comandos
 
 
@@ -94,7 +92,7 @@ def interpretar_comandos(cadena_comandos, operaciones, angulo):
 def ejecutar_comando(letra, angulo, tortuga, pila_tortugas):
     ''' '''
     posicion_inicial = tortuga.posicion_inicial[:]
-    if letra in 'FGX':
+    if letra in 'FGXY':
         tortuga.avanzar()
     elif letra == 'fg':
         tortuga.pluma_arriba()
@@ -110,11 +108,10 @@ def ejecutar_comando(letra, angulo, tortuga, pila_tortugas):
         tortuga_nueva = Tortuga()
         tortuga.copiar_tortuga(tortuga_nueva)
         pila_tortugas.apilar(tortuga_nueva)
-        tortuga = pila_tortugas.ver_tope()
     elif letra == ']':
         pila_tortugas.desapilar()
-    linea_comando_svg = tortuga.pasar_linea_svg()
     posicion_final = tortuga.posicion[:]
+    linea_comando_svg = tortuga.pasar_linea_svg()
     tortuga.posicion_inicial = posicion_final
     return linea_comando_svg, posicion_inicial, posicion_final
 
@@ -122,9 +119,17 @@ def ejecutar_comando(letra, angulo, tortuga, pila_tortugas):
 def actualizar_canvas(posicion_anterior, posicion_nueva, cordenada_minima, cordenada_maxima):
     eje_x = [posicion_anterior[0], posicion_nueva[0]]
     eje_y = [posicion_anterior[1], posicion_nueva[1]]
-    cordenada_maxima = [max(eje_x), max(eje_y)]
-    cordenada_minima = [min(eje_x), min(eje_y)]
-    return cordenada_minima, cordenada_maxima
+    if max(eje_x) > cordenada_maxima[0]:
+        cordenada_maxima[0] = max(eje_x)
+    if max(eje_y) > cordenada_maxima[1]:
+        cordenada_maxima[1] = max(eje_y)
+    if min(eje_x) < cordenada_minima[0]:
+        cordenada_minima[0] = min(eje_x)
+    if min(eje_y) < cordenada_minima[1]:
+        cordenada_minima[1] = min(eje_y)
+    ancho = abs(cordenada_minima[0]) + abs(cordenada_maxima[0])
+    alto = abs(cordenada_minima[1]) + abs(cordenada_maxima[1])
+    return cordenada_minima, ancho, alto
 
 
 
@@ -135,11 +140,10 @@ def escribir_archivo_svg(ruta, primera_linea, sucesion_comandos):
         print(MENSAJE_ERROR)
         return
     with open(ruta, 'w', encoding = 'utf8') as archivo:
-        archivo.write(f'{primera_linea}')
+        archivo.write(f'{primera_linea}\n')
         while not sucesion_comandos.esta_vacia():
-            archivo.write(f'{sucesion_comandos.desencolar()}')
+            archivo.write(f'{sucesion_comandos.desencolar()}\n')
         archivo.write('</svg>')
-
 
 
 
