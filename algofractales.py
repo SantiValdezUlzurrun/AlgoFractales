@@ -7,7 +7,11 @@ import csv
 ENTRADA = sys.argv[1::]
 DELIMITADOR_ARCHIVO_SISTEMA_L = ' '
 tabla_conversion = {}
-MENSAJE_ERROR = 'Error de parametros'
+MENSAJE_ERROR = '''Bienvenido, abriste el archivo sin ningun comando o con menos de los necesarios, sus comandos son:
+1. nombre del archivo .sl (obligatorio)
+2. numero de veces a iterar (obligatorio tiene que ser entero)
+3. nombre del archivo svg a escribir (obligatorio)
+'''
 OPERACIONES = "FGXYfg+-|[]"
 ERROR_ARCH_SISTEMA_L = 'El archivo ingresado a leer no existe'
 ERROR_ANGULO = 'el angulo del archivo no es un numero'
