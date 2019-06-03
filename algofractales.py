@@ -14,7 +14,10 @@ ERROR_ANGULO = 'el angulo del archivo no es un numero'
 ERROR_ARCHIVO_LETRA = 'hay una linea que falla en el archivo'
 
 def algo_fractales():
-    '''funcion main del archivo '''
+    '''funcion main del archivo que conecta las distintas funciones, en caso de que alguna encuentre un error, lo imprime y devuelve un Exception
+    en ese caso el programa se termina
+    pre: la Entrada tiene que ser valida
+    post: llama a las funciones necesarias para poder escribir el archivo svg deseado'''
     try:
         if validar_entrada(ENTRADA):
             ruta_archivo_sistema_l, iteraciones, ruta_archivo_svg = leer_entrada(ENTRADA)
@@ -27,7 +30,8 @@ def algo_fractales():
         return
 
 def validar_entrada(entrada):
-    ''' '''
+    '''Pre: recibe una lista de 3 elementos los cuales debe tener al elemento [1] como una cadena de entero
+    Post: devuelve True'''
     if len(entrada) < 3:
         return False
     elif len(entrada) == 3 and entrada[1].isdigit():
@@ -36,7 +40,11 @@ def validar_entrada(entrada):
 
 
 def leer_entrada(entrada_valida):
-    '''devuelve la entrada valida '''
+    '''Pre:recibe una entrada valida
+    post: devuelve la primer componente y (1), la segunda componente con (2), y la tercera componente y (3)
+         (1) si la componente del archivo le falta el .ls se lo agrega
+         (2) la transforma en entero
+         (3) si la componente del archivo le falta el .svg se lo agrega'''
     
     if not entrada_valida[2][::-1][:4:] == 'gvs.':
         entrada_valida[2] = entrada_valida[2] + '.svg'
@@ -46,15 +54,16 @@ def leer_entrada(entrada_valida):
 
 
 def generar_comandos(ruta, delimitador, tabla_conversion, iteraciones):
-    '''Recibe la ruta del archivo donde se encuentra el sistema l, su separador, una tabla de conversion y la cantidad de iteraciones
-    y devuelve una cadena de letras que se corresponden con los movimientos que debe realizar la tortuga
+    '''Pre : Recibe la ruta del archivo donde se encuentra el sistema l, su separador, una tabla de conversion y la cantidad de iteraciones
+    Post: devuelve una cadena de letras que se corresponden con los movimientos que debe realizar la tortuga
     '''
     leer_archivo_sistema_l(ruta, delimitador, tabla_conversion)
     movimientos = formar_movimientos(tabla_conversion, iteraciones)
     return movimientos
 
 def formar_movimientos(tabla_conversion, iteraciones):
-    ''' Itera el diccionario de axiomas y reglas hasta llegar a la deseada '''
+    '''Pre: recibe un diccionario con un formato de conversion y un entero 
+    Post: devuelve una cadena de la conversion recursiva hecha tantas veces como las recibidas'''
     movimientos = tabla_conversion["axiomas"]
     movimientos_nuevo = ""
     for i in range(iteraciones):
@@ -68,7 +77,14 @@ def formar_movimientos(tabla_conversion, iteraciones):
     return movimientos
 
 def leer_archivo_sistema_l(ruta, delimitador, tabla_conversion):
-    ''' Lee el archivo y genera un diccionario con las reglas necesarias '''
+    '''Pre: recibe un nombre de un archivo en formato cadena (si el archivo no existe imprime un mensaje y devuelve Exception),
+    una cadena que va a servir como delimitador, y un diccionario vacio
+    Post: si el archivo se encontro de la forma:
+    -angulo
+    -axiomas
+    -reglas
+    Entonces devuelve un diccionario con keys angulo,axioma, y las letras del archivo; y como valor lo que diga el archivo
+    '''
     try:
         with open(ruta, 'r', encoding = 'utf8') as archivo:
             lector = csv.reader(archivo, delimiter=delimitador)
@@ -100,7 +116,8 @@ def leer_archivo_sistema_l(ruta, delimitador, tabla_conversion):
 
 
 def interpretar_comandos(cadena_comandos, operaciones, angulo):
-    '''Recibe una cadena de operaciones y genera una cola de cada operacion en formato svg '''
+    '''Pre: Recibe una cadena de comandos a hacer, una cadena con las operaciones validas y un entero que va a servir de angulo
+    Post: genera una cola de cadenas con formato svg'''
     if len(cadena_comandos) == 0:
         print('ERROR_C_A')
         return Exception
@@ -123,7 +140,9 @@ def interpretar_comandos(cadena_comandos, operaciones, angulo):
 
 
 def ejecutar_comando(letra, angulo, tortuga, pila_tortugas):
-    '''recibe una tortuga y aplica una operacion que se le de '''
+    '''Pre: Recibe una letra que va a significar la accion a la tortuga recibida ( tambien se recibe una pila de tortugas si es un corchete la accion
+    y un angulo en caso de que la accion requerida lo pida
+    Post: devuelve la linea_comando_svg de la tortuga luego de aplicarle los cambios, su posicion inicial y final'''
     posicion_inicial = tortuga.posicion_inicial[:]
     if letra in 'FGXY':
         tortuga.avanzar()
@@ -150,7 +169,8 @@ def ejecutar_comando(letra, angulo, tortuga, pila_tortugas):
 
 
 def actualizar_canvas(posicion_anterior, posicion_nueva, cordenada_minima, cordenada_maxima):
-    ''' compara las posiciones y devuelve las maximas o minimas'''
+    '''pre: recibe 4 listas de largo 2 con enteros 
+    post: compara las posiciones y devuelve la minimas la suma de la minima y la maxima en cada eje'''
     eje_x = [posicion_anterior[0], posicion_nueva[0]]
     eje_y = [posicion_anterior[1], posicion_nueva[1]]
     if max(eje_x) > cordenada_maxima[0]:
@@ -169,7 +189,8 @@ def actualizar_canvas(posicion_anterior, posicion_nueva, cordenada_minima, corde
 
 
 def escribir_archivo_svg(ruta, primera_linea, sucesion_comandos):
-    ''' escribe un archivo segun lo devuelto en la funcion interpretar_comandos ''' 
+    '''Pre: recibe el nombre de una ruta a escribir, la primera linea a escribir y una cola de cadenas las cuales se escribiran en el orden el cual se vayan desencolando
+    Post: se escribio el archivo''' 
     if sucesion_comandos == None:
         print(MENSAJE_ERROR)
         return
